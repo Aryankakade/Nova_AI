@@ -1,0 +1,2700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova - Elite AI Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #f093fb;
+            --accent: #4facfe;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --dark: #0d1117;
+            --dark-card: #161b22;
+            --dark-hover: #21262d;
+            --dark-border: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --glass-bg: rgba(22, 27, 34, 0.8);
+            --glass-border: rgba(48, 54, 61, 0.8);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 35px 60px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #30363d 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.1) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(240, 147, 251, 0.1) 0%, transparent 60%),
+                radial-gradient(circle at 40% 80%, rgba(79, 172, 254, 0.1) 0%, transparent 60%);
+            animation: gradientShift 20s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.05), rgba(240, 147, 251, 0.05));
+            border-radius: 50%;
+            animation: float 25s infinite linear;
+        }
+
+        .shape:nth-child(1) { width: 60px; height: 60px; top: 20%; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 80px; height: 80px; top: 60%; left: 85%; animation-delay: -5s; }
+        .shape:nth-child(3) { width: 40px; height: 40px; top: 80%; left: 20%; animation-delay: -10s; }
+        .shape:nth-child(4) { width: 70px; height: 70px; top: 30%; left: 70%; animation-delay: -15s; }
+        .shape:nth-child(5) { width: 50px; height: 50px; top: 10%; left: 50%; animation-delay: -20s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
+            25% { transform: translateY(-100px) rotate(90deg); opacity: 0.3; }
+            50% { transform: translateY(0px) rotate(180deg); opacity: 0.1; }
+            75% { transform: translateY(-80px) rotate(270deg); opacity: 0.2; }
+            100% { transform: translateY(0px) rotate(360deg); opacity: 0.1; }
+        }
+
+        /* Page Management */
+        .page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: none;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .page.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Login Page */
+        .login-page {
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-logo {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .logo-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient-primary);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: white;
+            box-shadow: var(--shadow-xl);
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        .hero-tagline {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        .auth-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gradient-primary);
+            opacity: 0.5;
+        }
+
+        .age-restriction {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .age-restriction i {
+            font-size: 1.5rem;
+            color: var(--warning);
+        }
+
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.2rem 2rem;
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            background: var(--dark-card);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .social-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.5s;
+        }
+
+        .social-btn:hover::before {
+            left: 100%;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .social-btn.google:hover {
+            box-shadow: 0 10px 30px rgba(66, 133, 244, 0.3);
+        }
+
+        .social-btn.github:hover {
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .social-btn i {
+            font-size: 1.2rem;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--dark-border);
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: var(--dark-hover);
+        }
+
+        .auth-form {
+            text-align: center;
+        }
+
+        .auth-form h3 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: var(--dark-card);
+            border: 2px solid var(--dark-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Onboarding Page */
+        .onboarding-page {
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .onboarding-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .onboarding-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+        }
+
+        .onboarding-step {
+            display: none;
+        }
+
+        .onboarding-step.active {
+            display: block;
+            animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .step-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .interest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 1rem;
+            border-radius: 16px;
+            background: rgba(22, 27, 34, 0.3);
+        }
+
+        .interest-card {
+            background: var(--dark-card);
+            border: 2px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interest-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .interest-card.selected::before {
+            opacity: 0.1;
+        }
+
+        .interest-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .interest-card.selected {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .interest-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .interest-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .interest-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-secondary {
+            background: var(--dark-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--dark-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-hover);
+            color: var(--text-primary);
+        }
+
+        /* Chat Page */
+        .chat-page {
+            display: none;
+        }
+
+        .chat-page.active {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .user-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-info p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .new-chat-btn {
+            margin: 1rem;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .chat-item:hover {
+            background: var(--dark-hover);
+            border-color: var(--dark-border);
+        }
+
+        .chat-item.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .chat-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--dark-card);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .chat-item.active .chat-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-info p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .settings-menu {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .settings-btn {
+            padding: 0.75rem;
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-btn:hover {
+            background: var(--dark-hover);
+            color: var(--text-primary);
+            border-color: var(--primary);
+        }
+
+        /* Main Chat Area */
+        .main-chat {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: var(--dark);
+        }
+
+        .chat-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .agent-indicator {
+            padding: 0.5rem 1rem;
+            background: var(--gradient-success);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--dark-border);
+            background: transparent;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: var(--dark-hover);
+            color: var(--text-primary);
+            border-color: var(--primary);
+        }
+
+        .control-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .prompt-counter {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .counter-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .counter-bar {
+            width: 100px;
+            height: 4px;
+            background: var(--dark-border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .counter-progress {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Welcome Message Styling */
+        .welcome-message {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+        }
+
+        .welcome-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .welcome-info h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .welcome-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .welcome-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .welcome-time {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            max-width: 85%;
+            animation: messageSlide 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--gradient-secondary);
+            color: white;
+        }
+
+        .message.assistant .message-avatar {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .message-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.25rem 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .message.user .message-content {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+        }
+
+        .agent-badge {
+            font-size: 0.75rem;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: fit-content;
+        }
+
+        .typing-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        .chat-input-area {
+            padding: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .input-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            background: var(--dark-card);
+            border: 2px solid var(--dark-border);
+            border-radius: 24px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .input-container:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-preview {
+            position: absolute;
+            top: -60px;
+            left: 1rem;
+            right: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-preview.active {
+            display: flex;
+        }
+
+        .file-preview-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .file-preview-info {
+            flex: 1;
+        }
+
+        .file-preview-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-preview-size {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .file-preview-remove {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .file-preview-remove:hover {
+            color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            min-height: 24px;
+            max-height: 120px;
+            line-height: 1.5;
+        }
+
+        .chat-input:focus {
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .file-btn {
+            background: var(--dark-hover);
+            color: var(--text-secondary);
+        }
+
+        .file-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .voice-btn {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .voice-btn:hover:not(.listening) {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .voice-btn.listening {
+            background: var(--gradient-secondary);
+            animation: pulse 1s infinite;
+        }
+
+        .send-btn {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* File Upload */
+        .file-input {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-page.active {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -320px;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+            }
+            
+            .mobile-overlay.active {
+                display: block;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .auth-card,
+            .onboarding-card {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .interest-grid {
+                grid-template-columns: 1fr;
+                max-height: 50vh;
+            }
+
+            .control-btn#menuToggle {
+                display: flex !important;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-card);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--dark-border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--dark-border);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            z-index: 10000;
+            animation: toastSlide 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+        }
+
+        @keyframes toastSlide {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast.error {
+            border-color: var(--error);
+        }
+
+        .toast.warning {
+            border-color: var(--warning);
+        }
+
+        .toast.info {
+            border-color: var(--accent);
+        }
+
+        /* Voice Status Indicator */
+        .voice-status {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 9999;
+        }
+
+        .voice-status.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .voice-wave {
+            width: 4px;
+            height: 20px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+            animation: voiceWave 1s infinite;
+            margin: 0 1px;
+        }
+
+        .voice-wave:nth-child(2) { animation-delay: 0.1s; }
+        .voice-wave:nth-child(3) { animation-delay: 0.2s; }
+        .voice-wave:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes voiceWave {
+            0%, 100% { height: 4px; }
+            50% { height: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-effects">
+        <div class="bg-gradient"></div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div class="page login-page active" id="loginPage">
+        <div class="login-container">
+            <div class="hero-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h1 class="hero-title">Nova</h1>
+                <p class="hero-subtitle">Elite AI Platform</p>
+                <p class="hero-tagline">An AI That Codes, Cares, and Connects.</p>
+            </div>
+
+            <div class="auth-card">
+                <div class="age-restriction">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Age Restriction:</strong> This platform is exclusively for users 21+ years old with advanced AI requirements.
+                    </div>
+                </div>
+
+                <div class="social-login">
+                    <button class="social-btn google" id="googleLogin">
+                        <i class="fab fa-google"></i>
+                        Continue with Google
+                    </button>
+                    <button class="social-btn github" id="githubLogin">
+                        <i class="fab fa-github"></i>
+                        Continue with GitHub
+                    </button>
+                </div>
+
+                <div class="divider">
+                    <span>Secure Authentication Required</span>
+                </div>
+
+                <p style="font-size: 0.875rem; color: var(--text-muted); text-align: center;">
+                    By continuing, you agree to our Terms of Service and confirm you are 21+ years old.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="auth-form">
+                <h3 id="authTitle">Sign in with Google</h3>
+                <form id="authForm">
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" id="authEmail" placeholder="user@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="authPassword" placeholder="password123" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="authSubmit">
+                        <span class="loading" id="authLoading" style="display: none;"></span>
+                        <span id="authButtonText">Sign In</span>
+                    </button>
+                </form>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem; text-align: center;">
+                    Demo: user@gmail.com / password123
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Page -->
+    <div class="page onboarding-page" id="onboardingPage">
+        <div class="onboarding-container">
+            <div class="onboarding-card">
+                <!-- Step 1: Name -->
+                <div class="onboarding-step active" id="step1">
+                    <h2 class="step-title">Welcome to Nova!</h2>
+                    <p class="step-subtitle">Let's personalize your AI experience</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">What should we call you?</label>
+                        <input type="text" class="form-input" id="userName" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm your age</label>
+                        <input type="number" class="form-input" id="userAge" placeholder="Must be 21 or older" min="21" required>
+                    </div>
+
+                    <button class="btn btn-primary" id="nextStep1">
+                        <span>Next Step</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Step 2: Interests -->
+                <div class="onboarding-step" id="step2">
+                    <h2 class="step-title">What brings you to Nova?</h2>
+                    <p class="step-subtitle">Select your primary areas of interest (choose multiple)</p>
+                    
+                    <div class="interest-grid">
+                        <div class="interest-card" data-interest="coding">
+                            <div class="interest-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="interest-title">Software Development</h3>
+                            <p class="interest-desc">Programming, debugging, architecture</p>
+                        </div>
+
+                        <div class="interest-card" data-interest="research">
+                            <div class="interest-icon">
+                                <i class="fas fa-microscope"></i>
+                            </div>
+                            <h3 class="interest-title">Research & Analysis</h3>
+                            <p class="interest-desc">Academic research, data analysis</p>
+                        </div>
+
+                        <div class="interest-card" data-interest="medical">
+                            <div class="interest-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <h3 class="interest-title">Medical & Healthcare</h3>
+                            <p class="interest-desc">Health information, medical guidance</p>
+                        </div>
+
+                        <div class="interest-card" data-interest="financial">
+                            <div class="interest-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="interest-title">Finance & Investment</h3>
+                            <p class="interest-desc">Financial planning, trading, budgeting</p>
+                        </div>
+
+                        <div class="interest-card" data-interest="creative">
+                            <div class="interest-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3 class="interest-title">Creative Projects</h3>
+                            <p class="interest-desc">Design, writing, content creation</p>
+                        </div>
+
+                        <div class="interest-card" data-interest="productivity">
+                            <div class="interest-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h3 class="interest-title">Productivity & Planning</h3>
+                            <p class="interest-desc">Time management, organization</p>
+                        </div>
+
+                        <div class="interest-card" data-interest="therapy">
+                            <div class="interest-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="interest-title">Mental Wellness</h3>
+                            <p class="interest-desc">Emotional support, mindfulness</p>
+                        </div>
+
+                        <div class="interest-card" data-interest="general">
+                            <div class="interest-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3 class="interest-title">General AI Assistant</h3>
+                            <p class="interest-desc">Multi-purpose AI conversations</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                        <button class="btn btn-secondary" id="backStep2">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back</span>
+                        </button>
+                        <button class="btn btn-primary" id="finishOnboarding">
+                            <span>Start Using Nova</span>
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Page -->
+    <div class="page chat-page" id="chatPage">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <h3 id="userDisplayName">User</h3>
+                    <p id="userInterests">General AI Assistant</p>
+                </div>
+            </div>
+
+            <button class="new-chat-btn" id="newChatBtn">
+                <i class="fas fa-plus"></i>
+                Start New Chat
+            </button>
+
+            <div class="chat-list" id="chatList">
+                <div class="chat-item active" data-chat="1">
+                    <div class="chat-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="chat-info">
+                        <h4>General Chat 1</h4>
+                        <p>0/20 prompts used</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="settings-menu">
+                    <button class="settings-btn" id="settingsBtn" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="settings-btn" id="languageBtn" title="Language">
+                        <i class="fas fa-globe"></i>
+                    </button>
+                    <button class="settings-btn" id="helpBtn" title="Help">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                    <button class="settings-btn" id="logoutBtn" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat -->
+        <div class="main-chat">
+            <div class="prompt-counter">
+                <div class="counter-info">
+                    <span>Chat 1:</span>
+                    <span id="promptCount">0/20 prompts</span>
+                    <div class="counter-bar">
+                        <div class="counter-progress" id="counterProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="upgradeBtn" style="padding: 0.5rem 1rem; font-size: 0.8rem; display: none;">
+                    <i class="fas fa-crown"></i>
+                    Upgrade to Unlimited
+                </button>
+            </div>
+
+            <div class="chat-header">
+                <div class="chat-title">
+                    <button class="control-btn" id="menuToggle" style="display: none;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="agent-indicator" id="agentIndicator">
+                        <div class="status-dot"></div>
+                        <span id="currentAgent">GENERAL</span>
+                    </div>
+                </div>
+                <div class="chat-controls">
+                    <button class="control-btn" id="voiceToggle" title="Voice Mode">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="control-btn" id="clearChat" title="Clear Chat">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="control-btn" id="exportChat" title="Export Chat">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome message will be inserted here -->
+            </div>
+
+            <div class="chat-input-area">
+                <div class="input-container">
+                    <div class="file-preview" id="filePreview">
+                        <div class="file-preview-icon">
+                            <i class="fas fa-file"></i>
+                        </div>
+                        <div class="file-preview-info">
+                            <div class="file-preview-name" id="fileName">Document.pdf</div>
+                            <div class="file-preview-size" id="fileSize">2.4 MB</div>
+                        </div>
+                        <button class="file-preview-remove" id="removeFile">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Type your message here... (Supports file upload + message)" 
+                        rows="1"
+                    ></textarea>
+                    <div class="input-actions">
+                        <button class="action-btn file-btn" id="fileBtn" title="Upload File">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="action-btn voice-btn" id="voiceBtn" title="Voice Input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="action-btn send-btn" id="sendBtn" title="Send Message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Voice Status Indicator -->
+    <div class="voice-status" id="voiceStatus">
+        <div class="voice-wave"></div>
+        <div class="voice-wave"></div>
+        <div class="voice-wave"></div>
+        <div class="voice-wave"></div>
+        <span id="voiceStatusText">Listening...</span>
+    </div>
+
+    <!-- Hidden File Input -->
+    <input type="file" class="file-input" id="fileInput" multiple accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.csv,.xlsx,.pptx">
+
+    <script>
+        class NovaAI {
+            constructor() {
+                this.currentPage = 'login';
+                this.currentUser = null;
+                this.currentChat = 1;
+                this.chatData = {
+                    1: { prompts: 0, messages: [] }
+                };
+                this.selectedInterests = [];
+                this.currentAgent = 'general';
+                this.voiceEnabled = false;
+                this.isRecording = false;
+                this.recognition = null;
+                this.synthesis = null;
+                this.maxPromptsPerChat = 20;
+                this.selectedFiles = [];
+                this.authProvider = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupVoiceRecognition();
+                this.setupTextToSpeech();
+                this.showPage('login');
+            }
+
+            setupEventListeners() {
+                // Login buttons - FIXED: Made them properly clickable
+                const googleLogin = document.getElementById('googleLogin');
+                const githubLogin = document.getElementById('githubLogin');
+                
+                if (googleLogin) {
+                    googleLogin.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showAuthModal('google');
+                    });
+                }
+                
+                if (githubLogin) {
+                    githubLogin.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showAuthModal('github');
+                    });
+                }
+                
+                // Modal controls
+                document.getElementById('modalClose').addEventListener('click', () => this.hideAuthModal());
+                document.getElementById('authForm').addEventListener('submit', (e) => this.handleAuth(e));
+
+                // Onboarding steps
+                document.getElementById('nextStep1').addEventListener('click', () => this.nextStep(1));
+                document.getElementById('backStep2').addEventListener('click', () => this.previousStep(2));
+                document.getElementById('finishOnboarding').addEventListener('click', () => this.finishOnboarding());
+
+                // Interest selection
+                document.querySelectorAll('.interest-card').forEach(card => {
+                    card.addEventListener('click', () => this.toggleInterest(card));
+                });
+
+                // Chat functionality
+                document.getElementById('chatInput').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                document.getElementById('sendBtn').addEventListener('click', () => this.sendMessage());
+                document.getElementById('voiceBtn').addEventListener('click', () => this.toggleVoiceInput());
+                document.getElementById('voiceToggle').addEventListener('click', () => this.toggleVoiceOutput());
+                document.getElementById('fileBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+                document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileSelection(e));
+                document.getElementById('removeFile').addEventListener('click', () => this.removeSelectedFile());
+
+                // Chat management
+                document.getElementById('newChatBtn').addEventListener('click', () => this.createNewChat());
+                document.getElementById('clearChat').addEventListener('click', () => this.clearCurrentChat());
+                document.getElementById('exportChat').addEventListener('click', () => this.exportChat());
+
+                // Settings
+                document.getElementById('settingsBtn').addEventListener('click', () => this.showSettings());
+                document.getElementById('languageBtn').addEventListener('click', () => this.showLanguageSelector());
+                document.getElementById('helpBtn').addEventListener('click', () => this.showHelp());
+                document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+
+                // Mobile menu
+                document.getElementById('menuToggle').addEventListener('click', () => this.toggleMobileMenu());
+                document.getElementById('mobileOverlay').addEventListener('click', () => this.closeMobileMenu());
+
+                // Auto-resize textarea
+                const chatInput = document.getElementById('chatInput');
+                chatInput.addEventListener('input', () => {
+                    chatInput.style.height = 'auto';
+                    chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+                });
+
+                // Responsive handling
+                window.addEventListener('resize', () => this.handleResize());
+                this.handleResize();
+            }
+
+            showAuthModal(provider) {
+                this.authProvider = provider;
+                const modal = document.getElementById('loginModal');
+                const title = document.getElementById('authTitle');
+                
+                title.textContent = `Sign in with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`;
+                modal.classList.add('active');
+                
+                // Clear previous values
+                document.getElementById('authEmail').value = '';
+                document.getElementById('authPassword').value = '';
+            }
+
+            hideAuthModal() {
+                document.getElementById('loginModal').classList.remove('active');
+                this.authProvider = null;
+            }
+
+            async handleAuth(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('authEmail').value.trim();
+                const password = document.getElementById('authPassword').value;
+                const loading = document.getElementById('authLoading');
+                const buttonText = document.getElementById('authButtonText');
+                const submitBtn = document.getElementById('authSubmit');
+
+                if (!email || !password) {
+                    this.showToast('Please fill in all fields', 'error');
+                    return;
+                }
+
+                // Demo credentials for testing
+                const validCredentials = {
+                    'google': { email: 'user@gmail.com', password: 'password123' },
+                    'github': { email: 'user@github.com', password: 'password123' }
+                };
+
+                submitBtn.disabled = true;
+                loading.style.display = 'inline-block';
+                buttonText.textContent = 'Signing in...';
+
+                // Simulate authentication
+                setTimeout(() => {
+                    const validCred = validCredentials[this.authProvider];
+                    
+                    if (email === validCred.email && password === validCred.password) {
+                        this.currentUser = {
+                            id: `${this.authProvider}_${Date.now()}`,
+                            email: email,
+                            provider: this.authProvider,
+                            authenticated: true
+                        };
+                        
+                        this.hideAuthModal();
+                        this.showToast('Authentication successful!', 'success');
+                        this.showPage('onboarding');
+                    } else {
+                        this.showToast('Invalid credentials. Use: user@gmail.com / password123', 'error');
+                    }
+                    
+                    submitBtn.disabled = false;
+                    loading.style.display = 'none';
+                    buttonText.textContent = 'Sign In';
+                }, 1500);
+            }
+
+            setupVoiceRecognition() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = false;
+                    this.recognition.lang = 'en-US';
+
+                    this.recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        document.getElementById('chatInput').value = transcript;
+                        this.hideVoiceStatus();
+                        this.sendMessage();
+                    };
+
+                    this.recognition.onstart = () => {
+                        this.isRecording = true;
+                        document.getElementById('voiceBtn').classList.add('listening');
+                        this.showVoiceStatus('Listening...');
+                    };
+
+                    this.recognition.onend = () => {
+                        this.isRecording = false;
+                        document.getElementById('voiceBtn').classList.remove('listening');
+                        this.hideVoiceStatus();
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        this.showToast('Voice recognition error. Please try again.', 'error');
+                        this.hideVoiceStatus();
+                        this.isRecording = false;
+                        document.getElementById('voiceBtn').classList.remove('listening');
+                    };
+                }
+            }
+
+            setupTextToSpeech() {
+                if ('speechSynthesis' in window) {
+                    this.synthesis = window.speechSynthesis;
+                }
+            }
+
+            showVoiceStatus(text) {
+                const voiceStatus = document.getElementById('voiceStatus');
+                const statusText = document.getElementById('voiceStatusText');
+                statusText.textContent = text;
+                voiceStatus.classList.add('active');
+            }
+
+            hideVoiceStatus() {
+                document.getElementById('voiceStatus').classList.remove('active');
+            }
+
+            nextStep(currentStep) {
+                if (currentStep === 1) {
+                    const name = document.getElementById('userName').value.trim();
+                    const age = parseInt(document.getElementById('userAge').value);
+
+                    if (!name) {
+                        this.showToast('Please enter your name', 'error');
+                        return;
+                    }
+
+                    if (!age || age < 21) {
+                        this.showToast('You must be 21 or older to use Nova', 'error');
+                        return;
+                    }
+
+                    this.currentUser.name = name;
+                    this.currentUser.age = age;
+
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById('step2').classList.add('active');
+                }
+            }
+
+            previousStep(currentStep) {
+                if (currentStep === 2) {
+                    document.getElementById('step2').classList.remove('active');
+                    document.getElementById('step1').classList.add('active');
+                }
+            }
+
+            toggleInterest(card) {
+                const interest = card.dataset.interest;
+                
+                if (card.classList.contains('selected')) {
+                    card.classList.remove('selected');
+                    this.selectedInterests = this.selectedInterests.filter(i => i !== interest);
+                } else {
+                    card.classList.add('selected');
+                    this.selectedInterests.push(interest);
+                }
+            }
+
+            finishOnboarding() {
+                if (this.selectedInterests.length === 0) {
+                    this.showToast('Please select at least one area of interest', 'error');
+                    return;
+                }
+
+                this.currentUser.interests = this.selectedInterests;
+                
+                // Update UI with user info
+                document.getElementById('userDisplayName').textContent = this.currentUser.name;
+                document.getElementById('userAvatar').textContent = this.currentUser.name.charAt(0).toUpperCase();
+                document.getElementById('userInterests').textContent = this.selectedInterests.map(i => 
+                    i.charAt(0).toUpperCase() + i.slice(1)).join(', ');
+
+                this.showToast('Welcome to Nova!', 'success');
+                this.showPage('chat');
+                
+                // Add welcome message with user's name
+                setTimeout(() => {
+                    this.createWelcomeMessage();
+                }, 500);
+            }
+
+            createWelcomeMessage() {
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                // Get current time
+                const now = new Date();
+                const hour = now.getHours();
+                const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+                
+                // Create aesthetic welcome message like Claude
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'welcome-message';
+                welcomeDiv.innerHTML = `
+                    <div class="welcome-time">Just now</div>
+                    <div class="welcome-header">
+                        <div class="welcome-avatar">Nova</div>
+                        <div class="welcome-info">
+                            <h2>Hello ${this.currentUser.name}!</h2>
+                            <p>Your Elite AI Assistant</p>
+                        </div>
+                    </div>
+                    <div class="welcome-content">
+                        Good ${timeOfDay}! What's on your mind today? ✨
+                        <br><br>
+                        I'm Nova, an AI that codes, cares, and connects. I see you're interested in <strong>${this.selectedInterests.map(i => i.charAt(0).toUpperCase() + i.slice(1)).join(', ')}</strong> - perfect! I'll automatically adapt to provide the most relevant assistance for your needs.
+                        <br><br>
+                        Whether you need help with complex problems, creative projects, or just want to explore ideas, I'm here to provide intelligent, contextual responses. Ready to experience next-level AI assistance?
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(welcomeDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            showPage(pageId) {
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+
+                // Show target page
+                document.getElementById(`${pageId}Page`).classList.add('active');
+                this.currentPage = pageId;
+            }
+
+            handleFileSelection(e) {
+                const files = e.target.files;
+                
+                if (files.length > 0) {
+                    const file = files[0]; // Take first file for simplicity
+                    
+                    if (file.size > 25 * 1024 * 1024) { // 25MB limit
+                        this.showToast(`File is too large. Maximum size is 25MB.`, 'error');
+                        return;
+                    }
+
+                    this.selectedFiles = [file];
+                    this.showFilePreview(file);
+                }
+            }
+
+            showFilePreview(file) {
+                const preview = document.getElementById('filePreview');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+                const icon = preview.querySelector('.file-preview-icon i');
+
+                fileName.textContent = file.name;
+                fileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                
+                // Set appropriate icon
+                if (file.type.includes('pdf')) {
+                    icon.className = 'fas fa-file-pdf';
+                } else if (file.type.includes('image')) {
+                    icon.className = 'fas fa-file-image';
+                } else if (file.type.includes('document') || file.type.includes('word')) {
+                    icon.className = 'fas fa-file-word';
+                } else if (file.type.includes('sheet') || file.type.includes('excel')) {
+                    icon.className = 'fas fa-file-excel';
+                } else {
+                    icon.className = 'fas fa-file';
+                }
+                
+                preview.classList.add('active');
+                
+                // Update input placeholder - FIXED: Now requires user to add description with file
+                document.getElementById('chatInput').placeholder = 'Describe what you want me to do with this file... (Required)';
+            }
+
+            removeSelectedFile() {
+                this.selectedFiles = [];
+                document.getElementById('filePreview').classList.remove('active');
+                document.getElementById('chatInput').placeholder = 'Type your message here... (Supports file upload + message)';
+            }
+
+            async sendMessage() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                // FIXED: File upload requires message
+                if (this.selectedFiles.length > 0 && !message) {
+                    this.showToast('Please describe what you want me to do with the uploaded file', 'error');
+                    return;
+                }
+                
+                if (!message && this.selectedFiles.length === 0) return;
+
+                // Check prompt limit
+                const currentChatData = this.chatData[this.currentChat];
+                if (currentChatData.prompts >= this.maxPromptsPerChat) {
+                    this.showToast('You\'ve reached the 20 prompt limit for this chat. Please start a new chat.', 'warning');
+                    return;
+                }
+
+                let userMessage = message;
+                
+                // Handle file upload
+                if (this.selectedFiles.length > 0) {
+                    const file = this.selectedFiles[0];
+                    userMessage = `📁 **File Upload:** ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)\n\n${message}`;
+                }
+
+                // Add user message
+                this.addMessage('user', userMessage);
+                input.value = '';
+                input.style.height = 'auto';
+                this.removeSelectedFile();
+
+                // Update prompt counter
+                currentChatData.prompts++;
+                this.updatePromptCounter();
+
+                // Detect language and agent
+                const detectedLanguage = this.detectLanguage(message);
+                const detectedAgent = this.detectAgent(message);
+
+                // Auto-switch agent if needed
+                if (detectedAgent !== this.currentAgent) {
+                    this.switchAgent(detectedAgent, true);
+                }
+
+                // Show typing indicator
+                this.showTypingIndicator();
+
+                // Get response from backend API or generate intelligent fallback
+                try {
+                    const response = await this.callBackendAPI(message, detectedAgent, detectedLanguage);
+                    this.hideTypingIndicator();
+                    this.addMessage('assistant', response, true);
+                    
+                    // Speak response if voice is enabled
+                    if (this.voiceEnabled && this.synthesis) {
+                        this.speakText(response);
+                    }
+                } catch (error) {
+                    this.hideTypingIndicator();
+                    const fallbackResponse = this.generateIntelligentResponse(message, detectedAgent, detectedLanguage);
+                    this.addMessage('assistant', fallbackResponse, true);
+                    
+                    if (this.voiceEnabled && this.synthesis) {
+                        this.speakText(fallbackResponse);
+                    }
+                }
+
+                // Check if chat is full
+                if (currentChatData.prompts >= this.maxPromptsPerChat) {
+                    setTimeout(() => {
+                        this.showToast('Chat limit reached! Creating new chat...', 'info');
+                        setTimeout(() => this.createNewChat(), 2000);
+                    }, 1000);
+                }
+            }
+
+            async callBackendAPI(message, agent, language) {
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            chat_id: `chat_${this.currentChat}`,
+                            user_id: this.currentUser?.id || 'anonymous'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('API request failed');
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.success && data.response) {
+                        // Update agent if backend detected different one
+                        if (data.agent && data.agent !== this.currentAgent) {
+                            this.switchAgent(data.agent, true);
+                        }
+                        return data.response;
+                    } else {
+                        throw new Error(data.message || 'Invalid response from backend');
+                    }
+                } catch (error) {
+                    console.error('Backend API error:', error);
+                    throw error;
+                }
+            }
+
+            detectLanguage(text) {
+                // FIXED: Always return English as requested
+                return 'english';
+            }
+
+            detectAgent(text) {
+                const agentKeywords = {
+                    medical: ['health', 'doctor', 'medicine', 'symptoms', 'pain', 'fever', 'sick', 'treatment', 'hospital', 'disease', 'medical', 'illness', 'diagnosis'],
+                    coding: ['code', 'programming', 'debug', 'error', 'python', 'javascript', 'html', 'css', 'react', 'api', 'database', 'software', 'algorithm', 'function'],
+                    therapy: ['sad', 'stress', 'anxiety', 'depression', 'worried', 'upset', 'emotional', 'feelings', 'mental', 'therapy', 'counseling', 'mood'],
+                    financial: ['money', 'investment', 'budget', 'saving', 'stocks', 'trading', 'bank', 'loan', 'financial', 'finance', 'crypto', 'portfolio'],
+                    productivity: ['time', 'productive', 'organization', 'goals', 'planning', 'work', 'task', 'schedule', 'productivity', 'management', 'efficiency'],
+                    creative: ['creative', 'design', 'writing', 'art', 'story', 'poem', 'music', 'content', 'video', 'graphics', 'innovation'],
+                    research: ['research', 'study', 'analysis', 'data', 'paper', 'academic', 'science', 'experiment', 'literature', 'methodology']
+                };
+
+                const textLower = text.toLowerCase();
+                let maxScore = 0;
+                let bestAgent = 'general';
+
+                for (const [agent, keywords] of Object.entries(agentKeywords)) {
+                    const score = keywords.filter(keyword => textLower.includes(keyword)).length;
+                    if (score > maxScore && score >= 2) {
+                        maxScore = score;
+                        bestAgent = agent;
+                    }
+                }
+
+                return bestAgent;
+            }
+
+            generateIntelligentResponse(message, agent, language) {
+                // FIXED: Smart responses based on cli.py logic, always in English
+                const responses = {
+                    general: [
+                        `I understand you're asking about that. As Nova, your AI assistant that codes, cares, and connects, I can provide comprehensive insights. Let me help you with this thoughtfully...`,
+                        `Great question! My intelligent analysis suggests multiple approaches to this. Here's what I can share based on my advanced reasoning capabilities...`,
+                        `That's an interesting point! As your elite AI assistant, I can offer both theoretical knowledge and practical solutions. Let me explain in detail...`
+                    ],
+                    medical: [
+                        `I can provide general health information based on my medical knowledge. However, please consult healthcare professionals for specific concerns. Based on your question...`,
+                        `As your medical assistant, I understand your concern. While I offer comprehensive medical information, professional consultation is essential. Here's what I can share...`
+                    ],
+                    coding: [
+                        `Perfect coding question! As your programming expert, I can help solve this efficiently. Let me analyze your challenge and provide optimized solutions...`,
+                        `Great technical question! My software development expertise can help you approach this systematically. Here's my detailed analysis...`
+                    ],
+                    therapy: [
+                        `I hear you, and your feelings are completely valid. As your wellness assistant, I'm here to provide emotional support and guidance. Let's work through this together...`,
+                        `Thank you for sharing this with me. Mental health matters, and I'm equipped to offer strategies and support. Here's how we can address this...`
+                    ],
+                    financial: [
+                        `Excellent financial question! As your investment advisor, I can provide strategic insights based on market analysis. Let me break down the opportunities and risks...`,
+                        `Smart thinking about your finances! My comprehensive market knowledge can help you make informed decisions. Here's my analysis...`
+                    ],
+                    productivity: [
+                        `Great focus on productivity! As your efficiency expert, I can optimize your workflow using proven methodologies. Here are actionable strategies...`,
+                        `Time management is crucial for success! My productivity expertise can help you achieve more with less stress. Let me share targeted solutions...`
+                    ],
+                    creative: [
+                        `I love creative challenges! As your innovation partner, I can help spark breakthrough ideas. Let's explore creative possibilities together...`,
+                        `Fantastic creative direction! My design thinking and artistic knowledge can elevate your project. Here's how we can bring your vision to life...`
+                    ],
+                    research: [
+                        `Excellent research question! As your academic assistant, I can provide comprehensive analysis with reliable methodologies. Here's my systematic approach...`,
+                        `Perfect research focus! My knowledge spans multiple disciplines and research methods. Let me provide evidence-based insights...`
+                    ]
+                };
+
+                const agentResponseList = responses[agent] || responses.general;
+                return agentResponseList[Math.floor(Math.random() * agentResponseList.length)];
+            }
+
+            addMessage(sender, content, showAgent = false) {
+                const messagesContainer = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'message-avatar';
+                avatarDiv.textContent = sender === 'user' ? this.currentUser?.name?.charAt(0).toUpperCase() || 'U' : 'Nova';
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+
+                if (sender === 'assistant' && showAgent) {
+                    const agentBadge = document.createElement('div');
+                    agentBadge.className = 'agent-badge';
+                    agentBadge.textContent = this.currentAgent.toUpperCase();
+                    contentDiv.appendChild(agentBadge);
+                }
+
+                const messageText = document.createElement('div');
+                messageText.innerHTML = this.formatMessage(content);
+                contentDiv.appendChild(messageText);
+
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                contentDiv.appendChild(timeDiv);
+
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // Store message in chat data
+                this.chatData[this.currentChat].messages.push({
+                    sender,
+                    content,
+                    timestamp: new Date(),
+                    agent: sender === 'assistant' ? this.currentAgent : null
+                });
+            }
+
+            formatMessage(content) {
+                return content
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/📁 \*\*File Upload:\*\*/g, '📁 <strong>File Upload:</strong>');
+            }
+
+            showTypingIndicator() {
+                const messagesContainer = document.getElementById('chatMessages');
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.id = 'typingIndicator';
+
+                typingDiv.innerHTML = `
+                    <div class="message-avatar">Nova</div>
+                    <div class="typing-content">
+                        <span>Nova is thinking</span>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                `;
+
+                messagesContainer.appendChild(typingDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            switchAgent(agentName, auto = false) {
+                if (agentName === this.currentAgent) return;
+
+                this.currentAgent = agentName;
+                document.getElementById('currentAgent').textContent = agentName.toUpperCase();
+                document.getElementById('agentIndicator').className = `agent-indicator ${agentName}`;
+
+                if (auto) {
+                    const agentNames = {
+                        general: 'General Assistant',
+                        medical: 'Medical Expert',
+                        coding: 'Coding Expert',
+                        therapy: 'Therapy Assistant',
+                        financial: 'Financial Advisor',
+                        productivity: 'Productivity Coach',
+                        creative: 'Creative Partner',
+                        research: 'Research Assistant'
+                    };
+
+                    this.addMessage('assistant', `🔄 I've automatically switched to ${agentNames[agentName]} mode to better assist you with your ${agentName} question!`, true);
+                }
+            }
+
+            updatePromptCounter() {
+                const currentChatData = this.chatData[this.currentChat];
+                const count = currentChatData.prompts;
+                const percentage = (count / this.maxPromptsPerChat) * 100;
+
+                document.getElementById('promptCount').textContent = `${count}/${this.maxPromptsPerChat} prompts`;
+                document.getElementById('counterProgress').style.width = `${percentage}%`;
+
+                // Update chat list
+                const chatItem = document.querySelector(`[data-chat="${this.currentChat}"] .chat-info p`);
+                if (chatItem) {
+                    chatItem.textContent = `${count}/${this.maxPromptsPerChat} prompts used`;
+                }
+
+                // Show upgrade button if approaching limit
+                const upgradeBtn = document.getElementById('upgradeBtn');
+                if (count >= this.maxPromptsPerChat * 0.8) {
+                    upgradeBtn.style.display = 'flex';
+                }
+            }
+
+            createNewChat() {
+                const newChatId = Object.keys(this.chatData).length + 1;
+                this.chatData[newChatId] = { prompts: 0, messages: [] };
+
+                // Add to chat list
+                const chatList = document.getElementById('chatList');
+                const chatItem = document.createElement('div');
+                chatItem.className = 'chat-item';
+                chatItem.dataset.chat = newChatId;
+                chatItem.innerHTML = `
+                    <div class="chat-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="chat-info">
+                        <h4>General Chat ${newChatId}</h4>
+                        <p>0/${this.maxPromptsPerChat} prompts used</p>
+                    </div>
+                `;
+
+                chatItem.addEventListener('click', () => this.switchToChat(newChatId));
+                chatList.appendChild(chatItem);
+
+                // Switch to new chat
+                this.switchToChat(newChatId);
+                this.showToast(`Started new chat #${newChatId}`, 'success');
+            }
+
+            switchToChat(chatId) {
+                // Update active chat in UI
+                document.querySelectorAll('.chat-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector(`[data-chat="${chatId}"]`).classList.add('active');
+
+                // Switch current chat
+                this.currentChat = chatId;
+
+                // Clear and reload messages
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.innerHTML = '';
+
+                // Add welcome message for new chats
+                if (this.chatData[chatId].messages.length === 0) {
+                    this.createWelcomeMessage();
+                } else {
+                    // Reload existing messages
+                    this.chatData[chatId].messages.forEach(msg => {
+                        this.addMessage(msg.sender, msg.content, msg.sender === 'assistant');
+                    });
+                }
+
+                this.updatePromptCounter();
+            }
+
+            toggleVoiceInput() {
+                if (!this.recognition) {
+                    this.showToast('Voice recognition not supported in your browser', 'error');
+                    return;
+                }
+
+                if (this.isRecording) {
+                    this.recognition.stop();
+                } else {
+                    try {
+                        this.recognition.start();
+                    } catch (error) {
+                        this.showToast('Voice recognition error. Please try again.', 'error');
+                    }
+                }
+            }
+
+            toggleVoiceOutput() {
+                this.voiceEnabled = !this.voiceEnabled;
+                const voiceToggle = document.getElementById('voiceToggle');
+                
+                if (this.voiceEnabled) {
+                    voiceToggle.classList.add('active');
+                    this.showToast('Voice output enabled', 'success');
+                } else {
+                    voiceToggle.classList.remove('active');
+                    this.showToast('Voice output disabled', 'info');
+                }
+            }
+
+            speakText(text) {
+                if (!this.synthesis) return;
+
+                // Clean text for speech
+                const cleanText = text.replace(/🔄|🙏|🚀|🧠|🗣️|🎤|📁|🎯|✨|🤖/g, '').replace(/<[^>]*>/g, '').replace(/\[.*?\]/g, '').trim();
+                
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                utterance.volume = 0.8;
+
+                this.synthesis.speak(utterance);
+            }
+
+            clearCurrentChat() {
+                if (confirm('Are you sure you want to clear this chat? This action cannot be undone.')) {
+                    const messagesContainer = document.getElementById('chatMessages');
+                    messagesContainer.innerHTML = '';
+                    
+                    // Reset chat data
+                    this.chatData[this.currentChat] = { prompts: 0, messages: [] };
+                    
+                    // Add fresh welcome message
+                    this.createWelcomeMessage();
+                    this.updatePromptCounter();
+                    
+                    this.showToast('Chat cleared successfully', 'success');
+                }
+            }
+
+            exportChat() {
+                const chatData = this.chatData[this.currentChat];
+                const exportData = {
+                    chatId: this.currentChat,
+                    user: this.currentUser.name,
+                    timestamp: new Date().toISOString(),
+                    totalPrompts: chatData.prompts,
+                    messages: chatData.messages
+                };
+
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `Nova_Chat_${this.currentChat}_${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                this.showToast('Chat exported successfully', 'success');
+            }
+
+            showSettings() {
+                this.showToast('Settings panel coming soon!', 'info');
+            }
+
+            showLanguageSelector() {
+                this.showToast('Language preferences coming soon!', 'info');
+            }
+
+            showHelp() {
+                this.showToast('Help documentation coming soon!', 'info');
+            }
+
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    this.currentUser = null;
+                    this.chatData = { 1: { prompts: 0, messages: [] } };
+                    this.currentChat = 1;
+                    this.selectedInterests = [];
+                    this.selectedFiles = [];
+                    this.showPage('login');
+                    this.showToast('Logged out successfully', 'success');
+                }
+            }
+
+            toggleMobileMenu() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('mobileOverlay');
+                
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+
+            closeMobileMenu() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('mobileOverlay');
+                
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+
+            handleResize() {
+                const menuToggle = document.getElementById('menuToggle');
+                if (window.innerWidth <= 768) {
+                    menuToggle.style.display = 'flex';
+                } else {
+                    menuToggle.style.display = 'none';
+                    this.closeMobileMenu();
+                }
+            }
+
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                const icon = type === 'success' ? 'check-circle' : 
+                            type === 'error' ? 'exclamation-circle' : 
+                            type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+                
+                toast.innerHTML = `
+                    <i class="fas fa-${icon}"></i>
+                    <span>${message}</span>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'toastSlide 0.3s ease reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new NovaAI();
+        });
+
+        // Premium interactive effects
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.querySelector('.premium-cursor');
+            if (!cursor) {
+                const cursorEl = document.createElement('div');
+                cursorEl.className = 'premium-cursor';
+                cursorEl.style.cssText = `
+                    position: fixed;
+                    width: 20px;
+                    height: 20px;
+                    background: radial-gradient(circle, rgba(102,126,234,0.6) 0%, transparent 70%);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    transition: transform 0.1s ease;
+                    mix-blend-mode: screen;
+                `;
+                document.body.appendChild(cursorEl);
+            }
+            
+            const cursorElement = document.querySelector('.premium-cursor');
+            if (cursorElement) {
+                cursorElement.style.left = e.clientX - 10 + 'px';
+                cursorElement.style.top = e.clientY - 10 + 'px';
+            }
+        });
+
+        // Premium click effect
+        document.addEventListener('click', (e) => {
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 4px;
+                    height: 4px;
+                    background: linear-gradient(45deg, #667eea, #764ba2);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                `;
+                
+                document.body.appendChild(particle);
+                
+                const angle = (Math.PI * 2 * i) / 8;
+                const velocity = 60 + Math.random() * 40;
+                
+                particle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { 
+                        transform: `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px) scale(0)`, 
+                        opacity: 0 
+                    }
+                ], {
+                    duration: 800,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                }).onfinish = () => particle.remove();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'k':
+                        e.preventDefault();
+                        const chatInput = document.getElementById('chatInput');
+                        if (chatInput) chatInput.focus();
+                        break;
+                    case 'n':
+                        e.preventDefault();
+                        const newChatBtn = document.getElementById('newChatBtn');
+                        if (newChatBtn) newChatBtn.click();
+                        break;
+                    case '/':
+                        e.preventDefault();
+                        const voiceBtn = document.getElementById('voiceBtn');
+                        if (voiceBtn) voiceBtn.click();
+                        break;
+                }
+            }
+        });
+
+        // Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

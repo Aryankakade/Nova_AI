@@ -1,0 +1,15 @@
+# Ignore virtual environment
+eva_env/
+
+# Ignore system files
+*.pyc
+__pycache__/
+.DS_Store
+
+# Ignore IDE configs
+.vscode/
+.idea/
+
+# Ignore environment variables
+.env
+.env.*
